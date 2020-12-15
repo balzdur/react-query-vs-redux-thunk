@@ -18,9 +18,12 @@ function App() {
         the first time you load them. However, after you return to this list and
         click on any posts you have already visited again, you will see them
         load instantly and background refresh right before your eyes!{" "}
+      </p>
+      <p>
         <strong>
-          (You may need to throttle your network speed to simulate longer
-          loading sequences)
+          You may need to throttle your network speed to simulate longer loading
+          sequences and see the difference between isLoading and isFetching (in
+          background)
         </strong>
       </p>
       {postId > -1 ? (

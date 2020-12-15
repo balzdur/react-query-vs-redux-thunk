@@ -1,32 +1,32 @@
-import React from "react";
-import api from "../api";
-import { useQuery, useQueryClient } from "react-query";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Posts from "../base/Posts";
+import { FETCH_STATUS, fetchPosts, fetchPostById } from "./Reducer";
 
 function PostsWrapper({ setPostId }) {
-  const queryClient = useQueryClient();
-  const { data, error, isLoading, isError, isFetching } = useQuery(
-    "posts",
-    api.getPosts,
-    {
-      select: (data) =>
-        data.map((post) => ({
-          post,
-          onClick: () => setPostId(post.id),
-          // We can access the query data here to show bold links for
-          // ones that are cached
-          cachedLink: queryClient.getQueryData(["post", post.id]),
-        })),
-    }
-  );
+  const posts = useSelector((state) => state.posts);
+  const postsFetchStatus = useSelector((state) => state.postsFetchStatus);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
+
+  const data = posts.map((post) => ({
+    post,
+    onClick: () => {
+      dispatch(fetchPostById(post.id));
+      setPostId(post.id);
+    },
+  }));
 
   return (
     <Posts
       data={data}
-      error={error}
-      isLoading={isLoading}
-      isError={isError}
-      isFetching={isFetching}
+      error={{ message: "ERROR HANDLING NOT IMPLEMENTED" }}
+      isLoading={postsFetchStatus === FETCH_STATUS.PENDING}
+      isError={postsFetchStatus === FETCH_STATUS.REJECTED}
+      isFetching={false}
     />
   );
 }

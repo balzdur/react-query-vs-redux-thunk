@@ -1,24 +1,26 @@
 import React from "react";
-import { useQuery } from "react-query";
-import api from "../api";
+import { useSelector } from "react-redux";
 import Post from "../base/Post";
+import { FETCH_STATUS } from "./Reducer";
 
 function PostWrapper({ postId }) {
-  const { data, error, isLoading, isError, isFetching } = useQuery(
-    ["post", postId],
-    () => api.getPostById(postId),
-    {
-      enabled: !!postId,
-    }
+  const currentPost = useSelector((state) => state.currentPost);
+  const currentPostFetchStatus = useSelector(
+    (state) => state.currentPostFetchStatus
   );
+
+  /**
+   *  PostId is not needed because the thunk is dispatched from Posts component, on elem click
+   *  Thus, the way data is fetched and the component wich display it are separated
+   */
 
   return (
     <Post
-      data={data}
-      isLoading={isLoading}
-      isError={isError}
-      error={error}
-      isFetching={isFetching}
+      data={currentPost}
+      error={{ message: "ERROR HANDLING NOT IMPLEMENTED" }}
+      isLoading={currentPostFetchStatus === FETCH_STATUS.PENDING}
+      isError={currentPostFetchStatus === FETCH_STATUS.REJECTED}
+      isFetching={false}
     />
   );
 }
